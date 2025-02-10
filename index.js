@@ -1,33 +1,35 @@
+require("dotenv").config()
 const express = require("express")
 const cors = require("cors")
 const morgan = require("morgan")
 const app = express()
+const Person = require("./models/person")
 
 app.use(express.static("dist"))
 app.use(cors())
 
-let persons = [
-  {
-    name: "Arto Hellas",
-    number: "040-123456",
-    id: "1",
-  },
-  {
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-    id: "2",
-  },
-  {
-    name: "Dan Abramov",
-    number: "12-43-234345",
-    id: "3",
-  },
-  {
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-    id: "4",
-  },
-]
+// let persons = [
+//   {
+//     name: "Arto Hellas",
+//     number: "040-123456",
+//     id: "1",
+//   },
+//   {
+//     name: "Ada Lovelace",
+//     number: "39-44-5323523",
+//     id: "2",
+//   },
+//   {
+//     name: "Dan Abramov",
+//     number: "12-43-234345",
+//     id: "3",
+//   },
+//   {
+//     name: "Mary Poppendieck",
+//     number: "39-23-6423122",
+//     id: "4",
+//   },
+// ]
 const datetime = new Date()
 
 morgan.token("body", (req) => JSON.stringify(req.body))
@@ -59,7 +61,9 @@ app.get("/info", (request, response) => {
 })
 
 app.get("/api/persons", (request, response) => {
-  response.json(persons)
+  Person.find({}).then((persons) => {
+    response.json(persons)
+  })
 })
 
 const generateId = () => {
@@ -112,7 +116,7 @@ app.delete("/api/persons/:id", (request, response) => {
 
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
